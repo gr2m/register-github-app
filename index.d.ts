@@ -2,7 +2,7 @@ import { request } from "@octokit/request";
 
 export default function registerGitHubApp(
   manifest?: Manifest,
-  metaOptions?: MetaOptions
+  metaOptions?: MetaOptions,
 ): Promise<AppCredentials>;
 
 export type Manifest = {

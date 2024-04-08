@@ -20,7 +20,7 @@ const DEFAULT_META_OPTIONS = {
  */
 export default async function registerGitHubApp(
   manifest = DEFAULT_MANIFEST,
-  metaOptions = DEFAULT_META_OPTIONS
+  metaOptions = DEFAULT_META_OPTIONS,
 ) {
   // defaults
   manifest.homepageUrl ||= manifest.org
@@ -66,7 +66,7 @@ export default async function registerGitHubApp(
       const url = new URL(
         // @ts-expect-error - we can assume that request.url is always a string here
         request.url,
-        `http://localhost:${port}`
+        `http://localhost:${port}`,
       );
 
       const code = url.searchParams.get("code");
