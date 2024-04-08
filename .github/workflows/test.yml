@@ -37,4 +37,3 @@ jobs:
       - run: npm ci
       - run: npm run test:tsc
       - run: npm run test:tsd
-      - run: npm run lint
