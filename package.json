@@ -9,12 +9,28 @@
   ],
   "author": "Gregor Martynus (https://github.com/gr2m)",
   "license": "ISC",
+  "types": "index.d.ts",
   "dependencies": {
     "@octokit/request": "^9.0.1"
   },
-  "types": "index.d.ts",
   "devDependencies": {
+    "@types/node": "^20.12.5",
     "ava": "^6.1.2",
+    "c8": "^9.1.0",
+    "open-cli": "^8.0.0",
+    "prettier": "^3.2.5",
+    "tsd": "^0.31.0",
+    "typescript": "^5.4.4",
     "undici": "^6.12.0"
+  },
+  "scripts": {
+    "test": "npm run test:code && npm run test:tsc && npm run test:tsd && npm run lint",
+    "test:code": "c8 ava test/*.test.js",
+    "test:tsc": "tsc -p jsconfig.json",
+    "test:tsd": "tsd",
+    "lint": "prettier --check \"*.{js,json,ts,md}\" \".github/**/*.yml\"",
+    "lint:fix": "prettier --write \"*.{js,json,ts,md}\" \".github/**/*.yml\"",
+    "coverage": "c8 report --reporter html",
+    "postcoverage": "open-cli coverage/index.html"
   }
 }
