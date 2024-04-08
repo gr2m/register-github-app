@@ -74,6 +74,17 @@ const appCredentials = await registerGitHubApp({
 });
 ```
 
+## How it works
+
+Registering a GitHub App using the manifest flow is an alternative to manually register a GitHub App on a user account or an organization. Here is what the `register-github-app` does
+
+1. Starts a server on a random available port.
+2. When opened in browser, it generates an HTML form with an input named `manifest` which value is set to a JSON string with the app manifest settings, and submits the form to github.com
+3. On github.com, the user will be prompted to sign in or enter [sudo mode](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/sudo-mode).
+4. Once authenticated, the user has to confirm the GitHub App name. It must be globally unique.
+5. Once confirmed, the browser redirects to server started in the first step with a one-time code
+6. The app credentials are retrieved using the one-time code, the server is stopped, and the credentials are returned
+
 ## Resources
 
 - [Registering a GitHub App from a manifest](https://docs.github.com/en/apps/sharing-github-apps/registering-a-github-app-from-a-manifest)
