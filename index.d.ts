@@ -67,7 +67,7 @@ export type MetaOptions = {
   log?: Console["log"];
 
   /** custom `octokit.request` method */
-  request?: request;
+  request?: typeof request;
 };
 
 export type AppCredentials = {
