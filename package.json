@@ -8,5 +8,13 @@
     "github-app"
   ],
   "author": "Gregor Martynus (https://github.com/gr2m)",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@octokit/request": "^9.0.1"
+  },
+  "types": "index.d.ts",
+  "devDependencies": {
+    "ava": "^6.1.2",
+    "undici": "^6.12.0"
+  }
 }
