@@ -3,7 +3,7 @@
   "version": "0.0.0-development",
   "type": "module",
   "description": "Register a GitHub App using the manifest flow",
-  "repository": "github:gr2m/github-project",
+  "repository": "github:gr2m/register-github-app",
   "keywords": [
     "github-app"
   ],
