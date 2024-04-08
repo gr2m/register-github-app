@@ -1,0 +1,50 @@
+name: Auto formatting
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+
+jobs:
+  prettier:
+    name: Format with Prettier
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          app_id: ${{ vars.GR2M_PRETTIER_APP_ID }}
+          # Note: `HOWIE_TEAM_GITHUB_APP_PRIVATE_KEY` is set in both /settings/secrets/actions and /settings/secrets/dependabot
+          private_key: ${{ secrets.GR2M_PRETTIER_APP_PRIVATE_KEY }}
+
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          ref: ${{ github.head_ref }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "lts/*"
+          cache: npm
+
+      - name: Install Node.js dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint:fix
+
+      # Update PR with any linting corrections
+      - uses: stefanzweifel/git-auto-commit-action@3ea6ae190baf489ba007f7c92608f33ce20ef04a # v4.16.0
+        id: commit
+        with:
+          commit_message: |
+            style: prettier
+
+            [skip ci]
+          commit_user_name: gr2m-prettier[bot]
+          commit_user_email: <gr2m-prettier[bot]@users.noreply.github.com>
