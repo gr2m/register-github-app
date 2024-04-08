@@ -39,7 +39,7 @@ const privateKeyPKCS8 = String(
   crypto.createPrivateKey(appCredentials.privateKey).export({
     type: "pkcs8",
     format: "pem",
-  })
+  }),
 );
 const singleLinePrivateKey = privateKeyPKCS8.trim().replace(/\n/g, "\\n");
 
@@ -51,7 +51,7 @@ GITHUB_APP_PRIVATE_KEY="${singleLinePrivateKey}"
 GITHUB_APP_WEBHOOK_SECRET=${appCredentials.webhookSecret}
 GITHUB_APP_CLIENT_ID=${appCredentials.clientId}
 GITHUB_APP_SECRET=${appCredentials.clientSecret}
-`
+`,
 );
 ```
 
