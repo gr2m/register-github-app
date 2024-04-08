@@ -4,7 +4,15 @@
 
 ## Usage
 
-### Register an app on current user account and write credentials into a `.env` file.
+### Minimal
+
+```js
+import registerGitHubApp from "register-github-app";
+const appCredentials = await registerGitHubApp();
+console.log(appCredentials);
+```
+
+### Write credentials into a `.env` file.
 
 ```js
 import fs from "node:fs/promises";
@@ -19,11 +27,11 @@ const appCredentials = await registerGitHubApp({
   // Homepage of your app, e.g. your app's repository or your org/user account
   url: "https://github.com/monatheoctocat/monas-github-app",
   // object of permissions for new installations
-  default_permissions: {
+  permissions: {
     issues: "write",
   },
   // List of events for new installations
-  default_events: ["issues"],
+  events: ["issues"],
 });
 
 // convert private key to pkcs8 format (recommended for better cross plattform support)
@@ -33,15 +41,16 @@ const privateKeyPKCS8 = String(
     format: "pem",
   })
 );
+const singleLinePrivateKey = privateKeyPKCS8.trim().replace(/\n/g, "\\n");
 
 // write credentials into `.env` file
 await fs.writeFile(
   ".env",
   `GITHUB_APP_ID=${appCredentials.id}
-GITHUB_APP_PRIVATE_KEY=${privateKeyPKCS8}
-GITHUB_APP_WEBHOOK_SECRET=${appCredentials.webhook_secret}
-GITHUB_APP_CLIENT_ID=${appCredentials.client_id}
-GITHUB_APP_SECRET=${appCredentials.client_secret}
+GITHUB_APP_PRIVATE_KEY="${singleLinePrivateKey}"
+GITHUB_APP_WEBHOOK_SECRET=${appCredentials.webhookSecret}
+GITHUB_APP_CLIENT_ID=${appCredentials.clientId}
+GITHUB_APP_SECRET=${appCredentials.clientSecret}
 `
 );
 ```
@@ -57,11 +66,11 @@ const appCredentials = await registerGitHubApp({
   // name of your app
   name: "my-github-app",
   // object of permissions for new installations
-  default_permissions: {
+  permissions: {
     issues: "write",
   },
   // List of events for new installations
-  default_events: ["issues"],
+  events: ["issues"],
 });
 ```
 
