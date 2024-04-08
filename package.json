@@ -32,5 +32,16 @@
     "lint:fix": "prettier --write \"*.{js,json,ts,md}\" \".github/**/*.yml\"",
     "coverage": "c8 report --reporter html",
     "postcoverage": "open-cli coverage/index.html"
+  },
+  "release": {
+    "branches": [
+      "+([0-9]).x",
+      "main",
+      "next",
+      {
+        "name": "beta",
+        "prerelease": true
+      }
+    ]
   }
 }
