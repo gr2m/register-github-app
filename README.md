@@ -1,5 +1,3 @@
-# 🚧 Work in Progress - [#1](https://github.com/gr2m/register-github-app/pull/1)
-
 # `register-github-app`
 
 > Register a GitHub App using the manifest flow
