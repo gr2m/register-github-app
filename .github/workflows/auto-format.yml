@@ -18,7 +18,6 @@ jobs:
         id: app-token
         with:
           app_id: ${{ vars.GR2M_PRETTIER_APP_ID }}
-          # Note: `HOWIE_TEAM_GITHUB_APP_PRIVATE_KEY` is set in both /settings/secrets/actions and /settings/secrets/dependabot
           private_key: ${{ secrets.GR2M_PRETTIER_APP_PRIVATE_KEY }}
 
       - uses: actions/checkout@v4
