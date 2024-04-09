@@ -7,6 +7,7 @@
   "keywords": [
     "github-app"
   ],
+  "exports": "./index.js",
   "author": "Gregor Martynus (https://github.com/gr2m)",
   "license": "ISC",
   "types": "index.d.ts",
