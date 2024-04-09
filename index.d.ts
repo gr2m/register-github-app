@@ -1,4 +1,5 @@
 import { request } from "@octokit/request";
+import { components } from "@octokit/openapi-types";
 
 export default function registerGitHubApp(
   manifest?: Manifest,
@@ -60,19 +61,4 @@ export type MetaOptions = {
   request?: typeof request;
 };
 
-export type AppCredentials = {
-  /** App Database ID */
-  id: number;
-
-  /** App Private key */
-  privateKey: string;
-
-  /** Webhook Secret */
-  webhookSecret: string;
-
-  /** Client ID */
-  clientId: string;
-
-  /** Client Secret */
-  clientSecret: string;
-};
+export type AppCredentials = components["schemas"]["integration"];
