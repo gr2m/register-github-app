@@ -179,7 +179,5 @@ async function getNormalizedHtml(url) {
   const response = await fetch(url);
   const html = await response.text();
 
-  return html
-    .replace(/localhost:\d+/g, "localhost:<port normalized>")
-    .replace(/"app-\w+"/g, "app-<random string>");
+  return html.replace(/localhost:\d+/g, "localhost:<port normalized>");
 }

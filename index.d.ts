@@ -8,49 +8,39 @@ export default function registerGitHubApp(
 export type Manifest = {
   /** Organization login. If not set, the app will be registered on the user's account */
   org?: string;
-
-  /** The name of the GitHub App. Defaults to `app-{random string}` */
+  /** The name of the GitHub App. */
   name?: string;
-
-  /** The description of the GitHub App. */
+  /** A description of the GitHub App. */
   description?: string;
-
-  /** Whether to allow the app to be installed on other accounts. Defaults to false */
+  /** The homepage of your GitHub App. If `org` is set, `homepageUrl` will default to `https://github.com/{org}`, otherwise to `https://github.com` */
+  url: string;
+  /** The configuration of the GitHub App's webhook. */
+  hook_attributes?: {
+    /*
+     * __Required.__ The URL of the server that will receive the webhook POST requests.
+     */
+    url: string;
+    /*
+     * Deliver event details when this hook is triggered, defaults to true.
+     */
+    active?: boolean;
+  };
+  /** The full URL to redirect to after a user initiates the registration of a GitHub App from a manifest. */
+  redirect_url?: string;
+  /** A full URL to redirect to after someone authorizes an installation. You can provide up to 10 callback URLs. */
+  callback_urls?: string[];
+  /** A full URL to redirect users to after they install your GitHub App if additional setup is required. */
+  setup_url?: string;
+  /** Set to `true` when your GitHub App is available to the public or `false` when it is only accessible to the owner of the app. */
   public?: boolean;
-
-  /**
-   * The homepage of your GitHub App. If `org` is set, `homepageUrl` will default to `https://github.com/{org}`, otherwise to `https://github.com`
-   */
-  homepageUrl?: string;
-
-  /** Webhooks URL, required if `webhooksActive` is set to `true` */
-  webhookUrl?: string;
-
-  /** enable or disable webhooks. if `webhooksUrl` is set, `webhooksActive` defaults to `false`, otherwise to `true` */
-  webhookActive?: boolean;
-
-  /** URL for OAuth Callback */
-  oauthCallbackUrl?: string;
-
-  /** URL to redirect a user to after they install the app */
-  installSetupUrl?: string;
-
-  /** Whether to redirect a user to `installSetupUrl` when an installation is updated by a user. Defaults to false. */
-  setupOnUpdate?: boolean;
-
-  /** Whether to redirect a user to an OAuth flow after the app is installed. This requires `oauthCallbackUrl` to be set. The redirect URL will retrieve an both a `code` and `installation_id` query parameter */
-  oauthOnInstall?: boolean;
-
-  /**
-   * List of events that the app will subscribe to on new installations. Note: added events after an install must be approved by user.
-   * @see https://docs.github.com/en/webhooks/webhook-events-and-payloads
-   */
-  events?: string[];
-
-  /**
-   * Permissions that the app will get on new installations. Note: added permissions after an install must be approved by user.
-   */
-  permissions?: Record<string, string>;
+  /** The list of events the GitHub App subscribes to. */
+  default_events?: string[];
+  /** The set of permissions needed by the GitHub App. The format of the object uses the permission name for the key (for example, `issues`) and the access type for the value (for example, `write`). */
+  default_permissions?: Record<string, string>;
+  /** Set to `true` to request the user to authorize the GitHub App, after the GitHub App is installed. */
+  request_oauth_on_install?: boolean;
+  /** Set to `true` to redirect users to the setup_url after they update your GitHub App installation. */
+  setup_on_update?: boolean;
 };
 
 export type MetaOptions = {

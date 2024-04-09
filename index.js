@@ -5,7 +5,7 @@ import { createServer } from "node:http";
 import { request as octokitRequest } from "@octokit/request";
 
 const DEFAULT_MANIFEST = {
-  homepageUrl: "https://github.com",
+  url: "https://github.com",
 };
 const DEFAULT_META_OPTIONS = {
   githubUrl: "https://github.com",
@@ -19,18 +19,14 @@ const DEFAULT_META_OPTIONS = {
  * @returns {Promise<import('./index.d.ts').AppCredentials>}
  */
 export default async function registerGitHubApp(
-  manifest = DEFAULT_MANIFEST,
-  metaOptions = DEFAULT_META_OPTIONS,
+  { org, ...manifest } = DEFAULT_MANIFEST,
+  metaOptions = DEFAULT_META_OPTIONS
 ) {
   // defaults
-  manifest.homepageUrl ||= manifest.org
-    ? `https://github.com/${manifest.org}`
-    : "https://github.com";
-  manifest.name ||= `app-${randomString()}`;
+  manifest.url ||= org ? `https://github.com/${org}` : "https://github.com";
   manifest.public ||= false;
-  manifest.webhookActive ||= Boolean(manifest.webhookUrl);
-  manifest.setupOnUpdate ||= false;
-  manifest.oauthOnInstall ||= false;
+  manifest.setup_on_update ||= false;
+  manifest.request_oauth_on_install ||= false;
 
   metaOptions.githubUrl ||= DEFAULT_META_OPTIONS.githubUrl;
   metaOptions.githubApiUrl ||= DEFAULT_META_OPTIONS.githubApiUrl;
@@ -66,7 +62,7 @@ export default async function registerGitHubApp(
       const url = new URL(
         // @ts-expect-error - we can assume that request.url is always a string here
         request.url,
-        `http://localhost:${port}`,
+        `http://localhost:${port}`
       );
 
       const code = url.searchParams.get("code");
@@ -84,55 +80,24 @@ export default async function registerGitHubApp(
           </p>
         `);
 
-        resolve({
-          id: appCredentials.id,
-          privateKey: appCredentials.pem,
-          webhookSecret: appCredentials.webhook_secret || "",
-          clientId: appCredentials.client_id,
-          clientSecret: appCredentials.client_secret,
-        });
+        resolve(appCredentials);
 
         server.close();
         return;
       }
 
-      const registerUrl = manifest.org
-        ? `${metaOptions.githubUrl}/organizations/${manifest.org}/settings/apps/new`
+      const registerUrl = org
+        ? `${metaOptions.githubUrl}/organizations/${org}/settings/apps/new`
         : `${metaOptions.githubUrl}/settings/apps/new`;
-      const manifestJson = JSON.stringify(
-        Object.assign(
-          {
-            name: manifest.name,
-            description: manifest.description,
-            url: manifest.homepageUrl,
-            redirect_url: `http://localhost:${port}`,
-            public: manifest.public,
-            request_oauth_on_install: manifest.oauthOnInstall,
-            setup_url: manifest.installSetupUrl,
-            setup_on_update: manifest.setupOnUpdate,
-            default_events: manifest.events,
-            default_permissions: manifest.permissions,
-          },
-          manifest.webhookUrl
-            ? {
-                hook_attributes: {
-                  url: manifest.webhookUrl,
-                  active: manifest.webhookActive,
-                },
-              }
-            : null,
-          manifest.oauthCallbackUrl
-            ? {
-                callback_urls: [manifest.oauthCallbackUrl],
-              }
-            : null,
-        ),
-      );
+      const manifestJson = JSON.stringify({
+        redirect_url: `http://localhost:${port}`,
+        ...manifest,
+      });
 
       response.writeHead(200, { "Content-Type": "text/html" });
       response.end(`
         <meta charset="utf-8">
-        <h1>Registering GitHub App "${manifest.name}"</h1>
+        <h1>Registering GitHub App</h1>
         <form action="${registerUrl}" method="post">
           <input type="hidden" name="manifest" id="manifest">
           <input type="submit" value="Submit" id="submit">
@@ -151,8 +116,4 @@ export default async function registerGitHubApp(
       `);
     });
   });
-}
-
-function randomString() {
-  return Math.random().toString(36).substring(2, 9);
 }
