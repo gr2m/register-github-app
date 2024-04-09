@@ -39,3 +39,13 @@ export async function maximumUsageTest() {
   );
   expectType<AppCredentials>(credentials);
 }
+
+// test most important credentials keys
+export async function credentials() {
+  const credentials = await registerGitHubApp();
+  expectType<number>(credentials.id);
+  expectType<string | undefined>(credentials.pem);
+  expectType<string | null | undefined>(credentials.webhook_secret);
+  expectType<string | undefined>(credentials.client_id);
+  expectType<string | undefined>(credentials.client_secret);
+}
