@@ -76,6 +76,10 @@ const appCredentials = await registerGitHubApp({
 });
 ```
 
+## See also
+
+- https://github.com/gr2m/register-github - CLI to register a GitHub API using the manifest flow
+
 ## How it works
 
 Registering a GitHub App using the manifest flow is an alternative to manually register a GitHub App on a user account or an organization. Here is what the `register-github-app` does
