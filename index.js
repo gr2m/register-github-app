@@ -99,6 +99,35 @@ export default async function registerGitHubApp(
       const registerUrl = manifest.org
         ? `${metaOptions.githubUrl}/organizations/${manifest.org}/settings/apps/new`
         : `${metaOptions.githubUrl}/settings/apps/new`;
+      const manifestJson = JSON.stringify(
+        Object.assign(
+          {
+            name: manifest.name,
+            description: manifest.description,
+            url: manifest.homepageUrl,
+            redirect_url: `http://localhost:${port}`,
+            public: manifest.public,
+            request_oauth_on_install: manifest.oauthOnInstall,
+            setup_url: manifest.installSetupUrl,
+            setup_on_update: manifest.setupOnUpdate,
+            default_events: manifest.events,
+            default_permissions: manifest.permissions,
+          },
+          manifest.webhookUrl
+            ? {
+                hook_attributes: {
+                  url: manifest.webhookUrl,
+                  active: manifest.webhookActive,
+                },
+              }
+            : null,
+          manifest.oauthCallbackUrl
+            ? {
+                callback_urls: [manifest.oauthCallbackUrl],
+              }
+            : null,
+        ),
+      );
 
       response.writeHead(200, { "Content-Type": "text/html" });
       response.end(`
@@ -115,12 +144,7 @@ export default async function registerGitHubApp(
 
         <script>
         const input = document.getElementById("manifest")
-        input.value = \`${JSON.stringify({
-          name: manifest.name,
-          url: manifest.homepageUrl,
-          redirect_url: `http://localhost:${port}`,
-          public: manifest.public,
-        })}\`
+        input.value = \`${manifestJson}\`
 
         document.getElementById("submit").click()
         </script>
