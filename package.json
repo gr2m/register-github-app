@@ -12,6 +12,7 @@
   "license": "ISC",
   "types": "index.d.ts",
   "dependencies": {
+    "@octokit/openapi-types": "^22.0.1",
     "@octokit/request": "^9.0.1"
   },
   "devDependencies": {
