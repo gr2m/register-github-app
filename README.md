@@ -4,6 +4,8 @@
 
 ## Usage
 
+![](https://github.com/gr2m/register-github-app/assets/39992/61cbc419-df95-4043-b18b-7ead07f56e3b)
+
 ### Minimal
 
 ```js
@@ -27,19 +29,19 @@ const appCredentials = await registerGitHubApp({
   // Homepage of your app, e.g. your app's repository or your org/user account
   url: "https://github.com/monatheoctocat/monas-github-app",
   // object of permissions for new installations
-  permissions: {
+  default_permissions: {
     issues: "write",
   },
   // List of events for new installations
-  events: ["issues"],
+  evedefault_events: ["issues"],
 });
 
 // convert private key to pkcs8 format (recommended for better cross plattform support)
 const privateKeyPKCS8 = String(
-  crypto.createPrivateKey(appCredentials.privateKey).export({
+  crypto.createPrivateKey(appCredentials.pem).export({
     type: "pkcs8",
     format: "pem",
-  }),
+  })
 );
 const singleLinePrivateKey = privateKeyPKCS8.trim().replace(/\n/g, "\\n");
 
@@ -48,10 +50,10 @@ await fs.writeFile(
   ".env",
   `GITHUB_APP_ID=${appCredentials.id}
 GITHUB_APP_PRIVATE_KEY="${singleLinePrivateKey}"
-GITHUB_APP_WEBHOOK_SECRET=${appCredentials.webhookSecret}
-GITHUB_APP_CLIENT_ID=${appCredentials.clientId}
-GITHUB_APP_SECRET=${appCredentials.clientSecret}
-`,
+GITHUB_APP_WEBHOOK_SECRET=${appCredentials.webhook_secret}
+GITHUB_APP_CLIENT_ID=${appCredentials.client_id}
+GITHUB_APP_SECRET=${appCredentials.client_secret}
+`
 );
 ```
 
@@ -66,11 +68,11 @@ const appCredentials = await registerGitHubApp({
   // name of your app
   name: "my-github-app",
   // object of permissions for new installations
-  permissions: {
+  default_permissions: {
     issues: "write",
   },
   // List of events for new installations
-  events: ["issues"],
+  evedefault_events: ["issues"],
 });
 ```
 
