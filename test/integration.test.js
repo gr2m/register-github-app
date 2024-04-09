@@ -23,7 +23,7 @@ const MOCK_API_RESPONSE = {
   pem: "<pem>",
 };
 
-test("README minimal example", async (t) => {
+test.serial("README minimal example", async (t) => {
   const mockCode = 123;
   const mockAgent = new MockAgent();
   function mockFetch(url, opts) {
@@ -54,33 +54,33 @@ test("README minimal example", async (t) => {
   try {
     let retrieveRedirectPageHtml;
     const mockLog = async (message) => {
-      // TODO: if an assertion fails, the error is not logged by Ava, instead the test just times out
+      try {
+        console.log({ message, match: /^Open /.test(message) });
+        if (/^Open /.test(message)) {
+          // test landing page
+          const url = message.substr("Open ".length);
+          t.snapshot(await getNormalizedHtml(url), "landing page html");
 
-      if (/^Open /.test(message)) {
-        // test landing page
-        const url = message.substr("Open ".length);
-        t.snapshot(await get(url), "landing page html");
+          // test ?code redirect
+          retrieveRedirectPageHtml = getNormalizedHtml(
+            `${url}/?code=${mockCode}`
+          );
+          t.snapshot(await retrieveRedirectPageHtml, "redirect page html");
 
-        // test ?code redirect
-        retrieveRedirectPageHtml = get(`${url}/?code=${mockCode}`);
-        t.snapshot(await retrieveRedirectPageHtml, "redirect page html");
+          return;
+        }
 
-        return;
+        t.fail(`unrecognized message: ${message}`);
+      } catch (error) {
+        // TODO: if an assertion fails, the error is not logged by Ava, instead the test just times out
+        console.log(error);
       }
-
-      t.fail(`unrecognized message: ${message}`);
     };
 
-    const credentials = await registerGitHubApp(
-      {
-        name: "test-app",
-      },
-      {
-        port: 8191,
-        log: mockLog,
-        request: mockRequest,
-      }
-    );
+    const credentials = await registerGitHubApp(undefined, {
+      log: mockLog,
+      request: mockRequest,
+    });
     t.snapshot(credentials, "credentials");
 
     // wait until redirect page html is retrieved
@@ -90,7 +90,96 @@ test("README minimal example", async (t) => {
   }
 });
 
-async function get(url) {
+test.serial("README all features", async (t) => {
+  const mockCode = 123;
+  const mockAgent = new MockAgent();
+  function mockFetch(url, opts) {
+    opts ||= {};
+    opts.dispatcher = mockAgent;
+    return fetch(url, opts);
+  }
+
+  const mockRequest = octokitRequest.defaults({
+    request: {
+      fetch: mockFetch,
+    },
+  });
+
+  mockAgent.disableNetConnect();
+  const mockPool = mockAgent.get("https://api.github.com");
+  mockPool
+    .intercept({
+      method: "post",
+      path: `/app-manifests/${mockCode}/conversions`,
+    })
+    .reply(200, MOCK_API_RESPONSE, {
+      headers: {
+        "content-type": "application/json",
+      },
+    });
+
+  try {
+    let retrieveRedirectPageHtml;
+    const mockLog = async (message) => {
+      try {
+        if (/^Open /.test(message)) {
+          // test landing page
+          const url = message.substr("Open ".length);
+          t.snapshot(await getNormalizedHtml(url), "landing page html");
+
+          // test ?code redirect
+          retrieveRedirectPageHtml = getNormalizedHtml(
+            `${url}/?code=${mockCode}`
+          );
+          t.snapshot(await retrieveRedirectPageHtml, "redirect page html");
+
+          return;
+        }
+
+        t.fail(`unrecognized message: ${message}`);
+      } catch (error) {
+        // TODO: if an assertion fails, the error is not logged by Ava, instead the test just times out
+        console.log(error);
+      }
+    };
+
+    const credentials = await registerGitHubApp(
+      {
+        org: "my-org",
+        name: "test-app",
+        description: "my description",
+        homepageUrl: "https://my-app.com",
+        installSetupUrl: "https://my-app.com/setup",
+        oauthCallbackUrl: "https://my-app.com/oauth",
+        oauthOnInstall: true,
+        public: true,
+        setupOnUpdate: true,
+        webhookUrl: "https://my-app.com/oauth",
+        webhookActive: true,
+        events: ["issues"],
+        permissions: {
+          issues: "write",
+        },
+      },
+      {
+        log: mockLog,
+        request: mockRequest,
+      }
+    );
+    t.snapshot(credentials, "credentials");
+
+    // wait until redirect page html is retrieved
+    await retrieveRedirectPageHtml;
+  } catch (error) {
+    t.fail(error.message);
+  }
+});
+
+async function getNormalizedHtml(url) {
   const response = await fetch(url);
-  return response.text();
+  const html = await response.text();
+
+  return html
+    .replace(/localhost:\d+/g, "localhost:<port normalized>")
+    .replace(/"app-\w+"/g, "app-<random string>");
 }
