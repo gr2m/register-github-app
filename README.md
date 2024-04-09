@@ -4,7 +4,7 @@
 
 ## Usage
 
-![](https://github.com/gr2m/register-github-app/assets/39992/61cbc419-df95-4043-b18b-7ead07f56e3b)
+https://github.com/gr2m/register-github-app/assets/39992/61cbc419-df95-4043-b18b-7ead07f56e3b
 
 ### Minimal
 
@@ -41,7 +41,7 @@ const privateKeyPKCS8 = String(
   crypto.createPrivateKey(appCredentials.pem).export({
     type: "pkcs8",
     format: "pem",
-  }),
+  })
 );
 const singleLinePrivateKey = privateKeyPKCS8.trim().replace(/\n/g, "\\n");
 
@@ -53,7 +53,7 @@ GITHUB_APP_PRIVATE_KEY="${singleLinePrivateKey}"
 GITHUB_APP_WEBHOOK_SECRET=${appCredentials.webhook_secret}
 GITHUB_APP_CLIENT_ID=${appCredentials.client_id}
 GITHUB_APP_SECRET=${appCredentials.client_secret}
-`,
+`
 );
 ```
 
