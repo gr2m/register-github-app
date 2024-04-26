@@ -33,7 +33,7 @@ const appCredentials = await registerGitHubApp({
     issues: "write",
   },
   // List of events for new installations
-  evedefault_events: ["issues"],
+  default_events: ["issues"],
 });
 
 // convert private key to pkcs8 format (recommended for better cross plattform support)
@@ -72,7 +72,7 @@ const appCredentials = await registerGitHubApp({
     issues: "write",
   },
   // List of events for new installations
-  evedefault_events: ["issues"],
+  default_events: ["issues"],
 });
 ```
 
