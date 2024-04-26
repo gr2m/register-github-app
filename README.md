@@ -72,7 +72,7 @@ const appCredentials = await registerGitHubApp({
     issues: "write",
   },
   // List of events for new installations
-  evedefault_events: ["issues"],
+  default_events: ["issues"],
 });
 ```
 
